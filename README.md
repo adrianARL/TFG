@@ -1,2 +1,3 @@
-# TFG
-TFG Ingeniería Informática
+## TFG
+TFG Enginyeria Informàtica
+
