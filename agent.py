@@ -9,7 +9,8 @@ class Agent:
     REQUEST_TRAFFIC_LIGHT_STATUS = "requestTrafficLightStatus"
     TRAFFIC_LIGHT_REQUEST = "request_traffic_light_info"
     NESTED_LEADERS_REQUEST = "requestNestedLeaders"
-
+    SET_TRAFFIC_LIGHT_SERVICE = "set_traffic_light_service"
+    
     def __init__(self, leader, ip_leader, port_leader):
         self.ip_leader = ip_leader
         self.port_leader = port_leader

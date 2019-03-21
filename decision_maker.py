@@ -55,7 +55,9 @@ class DecisionMaker:
         self.trafficlight_positions = self.agent.request_leader_info(self.agent.TRAFFIC_LIGHT_REQUEST)
         self.nested_leaders = self.agent.request_leader_info(self.agent.NESTED_LEADERS_REQUEST)
         self.current_route = self.route_0
+        self.emergency = False
 
+        
     def process_data(self):
         last_trafficlight_state = ''
         distance = 100000
@@ -81,13 +83,17 @@ class DecisionMaker:
             self.car.stop()
         elif self.last_rfid in self.trafficlight_positions.keys():
             trafficlight = self.trafficlight_positions[self.last_rfid]
-            self.agent.send_message(self.agent.REQUEST_TRAFFIC_LIGHT_STATUS + '_' + trafficlight)
-            traffic_light_status = self.agent.receive_message()
-            print "trafficlight status: " + traffic_light_status
-            if traffic_light_status == self.RED or traffic_light_status == self.YELLOW:
-                self.car.stop()
-            elif self.car.is_car_stopped():
-                self.car.run()
+            if not self.emergency:
+                self.agent.send_message(self.agent.REQUEST_TRAFFIC_LIGHT_STATUS + '_' + trafficlight)
+                traffic_light_status = self.agent.receive_message()
+                print "trafficlight status: " + traffic_light_status
+                if traffic_light_status == self.RED or traffic_light_status == self.YELLOW:
+                    self.car.stop()
+                elif self.car.is_car_stopped():
+                    self.car.run()
+            else:
+                self.agent.send_message(self.agent.SET_TRAFFIC_LIGHT_SERVICE + "-" + trafficlight)
+                print "Envio al leader que ponga el semaforo " + trafficlight + " en estado de emergencia"
         elif self.car.is_car_stopped():
         	self.car.run()
 
@@ -114,3 +120,9 @@ class DecisionMaker:
             # self.leader_port = connection[1]
             # self.change_leader()
         pass
+
+    def is_emergency(self):
+        return self.emergency
+
+    def set_emergency(self, state):
+        self.emergency = state
